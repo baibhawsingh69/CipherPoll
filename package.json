@@ -1,20 +1,21 @@
 {
-  "name": "@midnight-ntwrk/example-bboard",
+  "name": "@midnight-ntwrk/anonymous-survey",
   "version": "0.1.0",
-  "author": "IOG",
+  "author": "Midnight Builder",
   "license": "MIT",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": ">=24.11.1"
-  },
   "workspaces": {
     "packages": [
-      "bboard-cli",
-      "bboard-ui",
+      "anonymous-survey-cli",
+      "anonymous-survey-ui",
       "api",
       "contract"
     ]
+  },
+  "scripts": {
+    "compact": "cd contract && npm run compact",
+    "build": "npm run compact && cd contract && npm run build && cd ../api && npm run build"
   },
   "dependencies": {
     "@midnight-ntwrk/dapp-connector-api": "4.0.1",
