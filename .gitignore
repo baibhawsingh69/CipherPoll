@@ -6,6 +6,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Next.js
+.next/
+out/
+
 # TypeScript
 *.tsbuildinfo
 
@@ -15,6 +19,9 @@ logs
 logs/*.log
 midnight-level-db
 coverage
+.midnight-wallet-state
+.midnight-wallet-state/
+*.seed
 
 # Test reports
 **/reports

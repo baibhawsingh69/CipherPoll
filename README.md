@@ -10,10 +10,10 @@ A privacy-preserving, full-stack Zero-Knowledge anonymous survey application bui
 
 | Network | Contract Address |
 |---------|------------------|
-| Preprod | `<YOUR_DEPLOYED_CONTRACT_ADDRESS>` |
+| Preprod | `7c55c230cecf067415798d79c5e2508ff5eb93911c1c6ff848d7d13ee95ce582` |
 
 ```env
-CONTRACT_ADDRESS=<YOUR_DEPLOYED_CONTRACT_ADDRESS>
+CONTRACT_ADDRESS=7c55c230cecf067415798d79c5e2508ff5eb93911c1c6ff848d7d13ee95ce582
 ```
 
 ## Features
@@ -48,15 +48,15 @@ CipherPoll allows organizations, DAOs, and communities to run 100% anonymous pol
 
 - **Smart Contract**: Compact 0.23 (Midnight Domain Specific Language)
 - **ZK Circuit Compiler**: `compact` (v0.5.1 / 0.31.1)
-- **Proof Server**: `midnightnetwork/proof-server:latest` (Port 6300)
+- **Proof Server**: `https://proof-server.preprod.midnight.network` / Docker `midnightnetwork/proof-server:latest` (Port 6300)
 - **API & Protocol**: `@midnight-ntwrk/midnight-js-protocol`, `@midnight-ntwrk/midnight-js-contracts`
-- **Frontend**: React 19, TypeScript, Vite 8, Lucide Icons, Custom Glassmorphism CSS System
+- **Frontend**: Next.js 15 (App Router), React 19, TypeScript, Midnight Lace Wallet Connector, Lucide Icons, Custom Glassmorphism CSS System
 - **CLI**: Node.js CLI with `@midnight-ntwrk/testkit-js` and LevelDB private state provider
 
 ## Folder Structure
 
 ```
-demo/
+CipherPoll/
 ├── contract/
 │   ├── src/
 │   │   ├── anonymous-survey.compact   # Compact 0.23 smart contract
@@ -66,29 +66,25 @@ demo/
 ├── api/
 │   ├── src/
 │   │   ├── common-types.ts           # Types & interfaces for Anonymous Survey API
-│   │   ├── index.ts                  # Midnight API wrapper & contract interactions
-│   │   └── utils/
+│   │   └── index.ts                  # Midnight API wrapper & contract interactions
 │   └── package.json
 ├── anonymous-survey-cli/
 │   ├── src/
-│   │   ├── config.ts                 # Preprod/Preview/Standalone network config
-│   │   ├── index.ts                  # CLI driver loop & wallet runner
-│   │   └── launcher/
+│   │   ├── config.ts                 # Preprod network config
+│   │   ├── deploy-preprod-wallet-facade.ts # Preprod deployment script
+│   │   └── index.ts                  # CLI driver loop & wallet runner
 │   └── package.json
 ├── anonymous-survey-ui/
-│   ├── src/
-│   │   ├── components/               # UI components
-│   │   ├── contexts/                 # BrowserDeployedBoardManager & providers
-│   │   ├── index.css                 # Midnight dark glassmorphism styling
-│   │   ├── App.tsx                   # Main React DApp application
-│   │   └── main.tsx                  # Application entrypoint
-│   ├── index.html
+│   ├── app/
+│   │   ├── layout.tsx                # Root layout with LaceProvider
+│   │   ├── page.tsx                  # Main CipherPoll Next.js DApp page
+│   │   └── globals.css               # Midnight dark glassmorphism styling
+│   ├── lib/
+│   │   └── lace-context.tsx          # Midnight Lace Wallet Provider & browser ZK contract runner
+│   ├── next.config.ts                # Next.js WASM & Webpack config
 │   └── package.json
 ├── images/                           # Application Screenshots
-│   ├── dashboard.png
-│   ├── zk-proof-modal.png
-│   ├── nullifier-audit-log.png
-│   └── create-survey.png
+│   └── Screenshot From 2026-07-27 22-52-00.png
 ├── package.json
 └── README.md
 ```
@@ -163,17 +159,8 @@ No additional coding should be required.
 
 ## Screenshots
 
-### 1. DApp Dashboard & Anonymous Survey Feed
-![CipherPoll Dashboard](./images/dashboard.png)
-
-### 2. Zero-Knowledge Circuit Execution Modal
-![ZK Circuit Execution Modal](./images/zk-proof-modal.png)
-
-### 3. On-Chain Ledger Nullifier Audit Log
-![Midnight Ledger Nullifier Audit Log](./images/nullifier-audit-log.png)
-
-### 4. Create New Anonymous Survey Modal
-![Create Anonymous Survey Modal](./images/create-survey.png)
+### CipherPoll Anonymous Survey DApp Interface
+![CipherPoll DApp Interface](./images/Screenshot%20From%202026-07-27%2022-52-00.png)
 
 ## Initial Idea
 

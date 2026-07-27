@@ -15,15 +15,10 @@ import { generateDust } from './generate-dust.js';
 import { unshieldedToken } from '@midnight-ntwrk/midnight-js-protocol/ledger';
 import crypto from 'node:crypto';
 
-const PROOF_SERVER_URL = process.env.PROOF_SERVER_URL || 'https://proof-server.preprod.midnight.network';
+const PROOF_SERVER_URL = process.env.PROOF_SERVER_URL || 'http://127.0.0.1:6300';
 const INDEXER_URL = 'https://indexer.preprod.midnight.network/api/v4/graphql';
 const INDEXER_WS = 'wss://indexer.preprod.midnight.network/api/v4/graphql/ws';
-const USER_MNEMONIC = 'gift excuse found hat elegant ivory toy jump across student captain wide twenty milk beauty survey trick brush latin answer item orange street learn';
-
-function mnemonicToSeedHex(mnemonic: string): string {
-  const seedBuffer = crypto.pbkdf2Sync(mnemonic.trim(), 'mnemonic', 2048, 64, 'sha512');
-  return seedBuffer.toString('hex').slice(0, 64);
-}
+const UMBRA_PREPROD_SEED = '61c9e170b4c478edf99bc7025aec88fd5eb31904eed5e863a5f584d76d37b5bb';
 
 async function main() {
   console.log('--------------------------------------------------');
@@ -46,7 +41,7 @@ async function main() {
     proofServer: PROOF_SERVER_URL,
   };
 
-  const masterSeedHex = mnemonicToSeedHex(USER_MNEMONIC);
+  const masterSeedHex = UMBRA_PREPROD_SEED;
   console.log('[1/5] Building Midnight Wallet Provider...');
   const walletProvider = await MidnightWalletProvider.build(logger, envConfiguration, masterSeedHex);
   await walletProvider.start();

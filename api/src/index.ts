@@ -18,7 +18,7 @@ import { combineLatest, map, tap, from, type Observable } from 'rxjs';
 import { toHex } from '@midnight-ntwrk/midnight-js-utils';
 import { AnonymousSurveyPrivateState, createAnonymousSurveyPrivateState } from '../../contract/src/witnesses.js';
 
-export const CONTRACT_ADDRESS_PLACEHOLDER = "<YOUR_DEPLOYED_CONTRACT_ADDRESS>";
+export const CONTRACT_ADDRESS_PLACEHOLDER = "7c55c230cecf067415798d79c5e2508ff5eb93911c1c6ff848d7d13ee95ce582";
 
 export interface DeployedAnonymousSurveyAPI {
   readonly deployedContractAddress: ContractAddress;
