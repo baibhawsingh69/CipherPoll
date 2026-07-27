@@ -2,6 +2,10 @@
 
 A privacy-preserving, full-stack Zero-Knowledge anonymous survey application built on the Midnight Network using Compact smart contracts and ZK nullifier proofs.
 
+## Live Deployment
+
+- **Vercel DApp URL**: [https://cipherpoll-ten.vercel.app](https://cipherpoll-ten.vercel.app)
+
 ## Contract Address
 
 | Network | Contract Address |
