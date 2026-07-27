@@ -10,19 +10,19 @@ import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { MidnightWalletProvider } from './midnight-wallet-provider.js';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
-import { toHex } from '@midnight-ntwrk/midnight-js-utils';
-import { randomBytes } from '../../api/src/utils/index.js';
 
 const PROOF_SERVER_URL = process.env.PROOF_SERVER_URL || 'https://proof-server.preprod.midnight.network';
 const INDEXER_URL = 'https://indexer.preprod.midnight.network/api/v4/graphql';
 const INDEXER_WS = 'wss://indexer.preprod.midnight.network/api/v4/graphql/ws';
 const BLOCKFROST_KEY = 'nightpreprod2PcFVTAw9hyCidUguT0NccoE5h6DJi39';
 const WALLET_ADDR = 'mn_addr_preprod1l2jzh0y35th6dj2f2zx0mjce6ad3sx24f4fg484syhmnaaavww9s62fsxl';
+const USER_PAYLOAD_HEX = 'faa42bbc91a2efa6c949508cfdcb19d75b1819554d528a9eb025f73ef7ac738b';
 
 async function main() {
   console.log('--------------------------------------------------');
-  console.log('🚀 Deploying Anonymous Survey Contract to Preprod');
+  console.log('🚀 Deploying Anonymous Survey Contract to Preprod via CLI');
   console.log(`Wallet Address: ${WALLET_ADDR}`);
+  console.log(`Payload Hex (32 bytes): ${USER_PAYLOAD_HEX}`);
   console.log(`Proof Server: ${PROOF_SERVER_URL}`);
   console.log(`Blockfrost Key: ${BLOCKFROST_KEY.slice(0, 12)}...`);
   console.log('--------------------------------------------------');
@@ -42,8 +42,8 @@ async function main() {
     proofServer: PROOF_SERVER_URL,
   };
 
-  const seed = process.env.WALLET_SEED || toHex(randomBytes(32));
-  console.log(`[1/4] Initializing Midnight Wallet Provider with seed...`);
+  const seed = process.env.WALLET_SEED || USER_PAYLOAD_HEX;
+  console.log(`[1/4] Initializing Midnight Wallet Provider with user payload hex...`);
   
   const walletProvider = await MidnightWalletProvider.build(logger, envConfiguration, seed);
   await walletProvider.start();
@@ -76,8 +76,7 @@ async function main() {
     await walletProvider.stop();
     process.exit(0);
   } catch (err: any) {
-    console.error('❌ Deployment encountered network/wallet requirement:', err.message || err);
-    console.log('\nContract Artifacts and Code are 100% pre-compiled and ready for deployment with a funded/synced preprod wallet via Midnight Lace.');
+    console.error('❌ Deployment status:', err.message || err);
     await walletProvider.stop();
     process.exit(0);
   }
