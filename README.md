@@ -80,6 +80,11 @@ demo/
 │   │   └── main.tsx                  # Application entrypoint
 │   ├── index.html
 │   └── package.json
+├── images/                           # Application Screenshots
+│   ├── dashboard.png
+│   ├── zk-proof-modal.png
+│   ├── nullifier-audit-log.png
+│   └── create-survey.png
 ├── package.json
 └── README.md
 ```
@@ -154,7 +159,17 @@ No additional coding should be required.
 
 ## Screenshots
 
-*(Add screenshots of CipherPoll UI, ZK Proof Modal, and Audit Log here)*
+### 1. DApp Dashboard & Anonymous Survey Feed
+![CipherPoll Dashboard](./images/dashboard.png)
+
+### 2. Zero-Knowledge Circuit Execution Modal
+![ZK Circuit Execution Modal](./images/zk-proof-modal.png)
+
+### 3. On-Chain Ledger Nullifier Audit Log
+![Midnight Ledger Nullifier Audit Log](./images/nullifier-audit-log.png)
+
+### 4. Create New Anonymous Survey Modal
+![Create Anonymous Survey Modal](./images/create-survey.png)
 
 ## Initial Idea
 
