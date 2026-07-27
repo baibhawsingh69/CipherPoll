@@ -1,7 +1,7 @@
 {
-  "name": "@midnight-ntwrk/bboard-cli",
+  "name": "@midnight-ntwrk/anonymous-survey-cli",
   "version": "0.1.0",
-  "author": "IOG",
+  "author": "Midnight Foundation",
   "license": "MIT",
   "private": true,
   "type": "module",
