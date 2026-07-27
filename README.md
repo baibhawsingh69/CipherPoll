@@ -4,7 +4,7 @@ A privacy-preserving, full-stack Zero-Knowledge anonymous survey application bui
 
 ## Live Deployment
 
-- **Vercel DApp URL**: [https://cipherpoll-ten.vercel.app](https://cipherpoll-ten.vercel.app)
+- **Vercel DApp URL**: [https://cipherpoll-peach.vercel.app](https://cipherpoll-peach.vercel.app)
 
 ## Contract Address
 
