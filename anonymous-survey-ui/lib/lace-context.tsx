@@ -231,8 +231,8 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
       const { setNetworkId } = await import('@midnight-ntwrk/midnight-js-network-id');
       const { parseCoinPublicKeyToHex, parseEncPublicKeyToHex } = await import('@midnight-ntwrk/midnight-js-utils');
 
-      const AnonymousSurvey = await import('../../contract/dist/managed/anonymous-survey/contract/index.js');
-      const { witnesses, createAnonymousSurveyPrivateState } = await import('../../contract/dist/witnesses.js');
+      const AnonymousSurvey = await import('../../contract/src/managed/anonymous-survey/contract/index.js');
+      const { witnesses, createAnonymousSurveyPrivateState } = await import('../../contract/src/witnesses');
 
       setNetworkId(NETWORK);
 
@@ -374,7 +374,7 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
   const fetchLedgerState = useCallback(async (): Promise<LedgerStateData | null> => {
     if (!contractAddress) return null;
     try {
-      const AnonymousSurvey = await import('../../contract/dist/managed/anonymous-survey/contract/index.js');
+      const AnonymousSurvey = await import('../../contract/src/managed/anonymous-survey/contract/index.js');
       const { indexerPublicDataProvider } = await import('@midnight-ntwrk/midnight-js-indexer-public-data-provider');
       const publicDataProvider = indexerPublicDataProvider(
         'https://indexer.preprod.midnight.network/api/v4/graphql',
