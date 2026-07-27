@@ -15,7 +15,8 @@
   },
   "scripts": {
     "compact": "cd contract && npm run compact",
-    "build": "npm run compact && cd contract && npm run build && cd ../api && npm run build"
+    "build": "npm run compact && cd contract && npm run build && cd ../api && npm run build",
+    "deploy:preprod": "cd anonymous-survey-cli && npm run deploy:preprod"
   },
   "dependencies": {
     "@midnight-ntwrk/dapp-connector-api": "4.0.1",
@@ -50,6 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^8.61.0",
     "@typescript-eslint/parser": "^8.61.0",
     "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-react": "^7.37.5",

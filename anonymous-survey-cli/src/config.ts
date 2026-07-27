@@ -59,11 +59,12 @@ export class PreviewTestEnvironment extends RemoteTestEnvironment {
   }
 
   private getProofServerUrl(): string {
+    if (process.env.PROOF_SERVER_URL) return process.env.PROOF_SERVER_URL;
     const container = this.proofServerContainer as { getUrl(): string } | undefined;
-    if (!container) {
-      throw new Error('Proof server container is not available.');
+    if (container) {
+      return container.getUrl();
     }
-    return container.getUrl();
+    return 'https://proof-server.preview.midnight.network';
   }
 
   getEnvironmentConfiguration(): EnvironmentConfiguration {
@@ -86,11 +87,12 @@ export class PreprodTestEnvironment extends RemoteTestEnvironment {
   }
 
   private getProofServerUrl(): string {
+    if (process.env.PROOF_SERVER_URL) return process.env.PROOF_SERVER_URL;
     const container = this.proofServerContainer as { getUrl(): string } | undefined;
-    if (!container) {
-      throw new Error('Proof server container is not available.');
+    if (container) {
+      return container.getUrl();
     }
-    return container.getUrl();
+    return 'https://proof-server.preprod.midnight.network';
   }
 
   getEnvironmentConfiguration(): EnvironmentConfiguration {
