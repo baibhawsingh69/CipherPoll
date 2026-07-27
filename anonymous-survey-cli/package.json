@@ -14,6 +14,7 @@
     "preview-remote": "node --experimental-specifier-resolution=node --loader ts-node/esm src/launcher/preview.ts",
     "preprod-remote": "node --experimental-specifier-resolution=node --loader ts-node/esm src/launcher/preprod.ts",
     "deploy:preprod": "node --experimental-specifier-resolution=node --loader ts-node/esm src/deploy-preprod.ts",
+    "deploy:standalone": "node --experimental-specifier-resolution=node --loader ts-node/esm src/deploy-standalone.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

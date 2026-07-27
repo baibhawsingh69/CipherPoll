@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Programmatic Deployment Script for Midnight Preprod Network
+// Programmatic Preprod Contract Deployment Script with Full Wallet Sync & Faucet Support
 
 import { createLogger } from './logger-utils.js';
 import { PreprodRemoteConfig } from './config.js';
@@ -10,13 +10,14 @@ import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { MidnightWalletProvider } from './midnight-wallet-provider.js';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { syncWallet, waitForUnshieldedFunds } from './wallet-utils.js';
+import { generateDust } from './generate-dust.js';
+import { unshieldedToken } from '@midnight-ntwrk/midnight-js-protocol/ledger';
 import crypto from 'node:crypto';
 
 const PROOF_SERVER_URL = process.env.PROOF_SERVER_URL || 'https://proof-server.preprod.midnight.network';
 const INDEXER_URL = 'https://indexer.preprod.midnight.network/api/v4/graphql';
 const INDEXER_WS = 'wss://indexer.preprod.midnight.network/api/v4/graphql/ws';
-const BLOCKFROST_KEY = 'nightpreprod2PcFVTAw9hyCidUguT0NccoE5h6DJi39';
-const WALLET_ADDR = 'mn_addr_preprod1l2jzh0y35th6dj2f2zx0mjce6ad3sx24f4fg484syhmnaaavww9s62fsxl';
 const USER_MNEMONIC = 'gift excuse found hat elegant ivory toy jump across student captain wide twenty milk beauty survey trick brush latin answer item orange street learn';
 
 function mnemonicToSeedHex(mnemonic: string): string {
@@ -26,10 +27,8 @@ function mnemonicToSeedHex(mnemonic: string): string {
 
 async function main() {
   console.log('--------------------------------------------------');
-  console.log('🚀 Deploying Anonymous Survey Contract to Preprod via CLI');
-  console.log(`Wallet Address: ${WALLET_ADDR}`);
+  console.log('🚀 Executing CLI Deployment on Midnight Preprod...');
   console.log(`Proof Server: ${PROOF_SERVER_URL}`);
-  console.log(`Blockfrost Key: ${BLOCKFROST_KEY.slice(0, 12)}...`);
   console.log('--------------------------------------------------');
 
   setNetworkId('preprod');
@@ -48,12 +47,32 @@ async function main() {
   };
 
   const masterSeedHex = mnemonicToSeedHex(USER_MNEMONIC);
-  console.log(`[1/4] Initializing Midnight Wallet Provider with derived master seed hex (${masterSeedHex.slice(0, 16)}...)...`);
-  
+  console.log('[1/5] Building Midnight Wallet Provider...');
   const walletProvider = await MidnightWalletProvider.build(logger, envConfiguration, masterSeedHex);
   await walletProvider.start();
 
-  console.log(`[2/4] Initializing ZK Key Material & Proof Provider...`);
+  console.log('[2/5] Syncing wallet state with Preprod indexer...');
+  const unshieldedState = await waitForUnshieldedFunds(
+    logger,
+    walletProvider.wallet,
+    envConfiguration,
+    unshieldedToken(),
+    true, // auto-request faucet if needed
+    1000
+  );
+
+  console.log('[3/5] Generating Dust Registration Transaction...');
+  try {
+    const dustTx = await generateDust(logger, masterSeedHex, unshieldedState, walletProvider.wallet);
+    if (dustTx) {
+      console.log(`Dust registered: ${dustTx}`);
+      await syncWallet(logger, walletProvider.wallet);
+    }
+  } catch (err: any) {
+    console.log(`Dust status note: ${err.message || err}`);
+  }
+
+  console.log('[4/5] Preparing ZK Proof Material...');
   const zkConfigProvider = new NodeZkConfigProvider<'cast_anonymous_vote' | 'close_survey'>(config.zkConfigPath);
   const proofProvider = httpClientProofProvider(PROOF_SERVER_URL, zkConfigProvider);
 
@@ -71,20 +90,19 @@ async function main() {
     midnightProvider: walletProvider,
   };
 
-  console.log(`[3/4] Compiling and Executing Contract Deployment Circuit...`);
-  try {
-    const api = await AnonymousSurveyAPI.deploy(providers, logger);
-    console.log('--------------------------------------------------');
-    console.log('🎉 CONTRACT DEPLOYMENT SUCCESSFUL!');
-    console.log(`Deployed Contract Address: ${api.deployedContractAddress}`);
-    console.log('--------------------------------------------------');
-    await walletProvider.stop();
-    process.exit(0);
-  } catch (err: any) {
-    console.error('❌ Deployment status:', err.message || err);
-    await walletProvider.stop();
-    process.exit(0);
-  }
+  console.log('[5/5] Deploying Compact Smart Contract to Preprod...');
+  const api = await AnonymousSurveyAPI.deploy(providers, logger);
+
+  console.log('--------------------------------------------------');
+  console.log('🎉 CONTRACT DEPLOYMENT SUCCESSFUL!');
+  console.log(`Deployed Contract Address: ${api.deployedContractAddress}`);
+  console.log('--------------------------------------------------');
+
+  await walletProvider.stop();
+  process.exit(0);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error('Deployment process stopped:', err);
+  process.exit(1);
+});
