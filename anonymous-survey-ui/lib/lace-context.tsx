@@ -48,7 +48,7 @@ function isStaleWalletChannel(err: unknown): boolean {
 }
 
 const PRIVATE_STATE_ID = 'anonymousSurveyPrivateState';
-const LACE_PASSWORD = 'CipherPoll-Lace-Private-State-Password-V1-Goated!@#$';
+const WALLET_PASSWORD = 'CipherPoll-Midnight-Private-State-Password-V1-Goated!@#$';
 
 const NETWORK = process.env.NEXT_PUBLIC_NETWORK || 'preprod';
 const DEFAULT_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
@@ -77,8 +77,9 @@ export interface LaceContextType {
   isConnecting: boolean;
   isWrongNetwork: boolean;
   walletState: WalletStateLite | null;
+  selectedWalletName: string | null;
   error: string | null;
-  connect: () => Promise<void>;
+  connect: (walletRdns?: string) => Promise<void>;
   disconnect: () => void;
   deployedContract: any;
   privateStateProvider: any;
@@ -105,6 +106,7 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState<boolean>(false);
   const [walletState, setWalletState] = useState<WalletStateLite | null>(null);
+  const [selectedWalletName, setSelectedWalletName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [deployedContract, setDeployedContract] = useState<any>(null);
@@ -141,11 +143,12 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
   const disconnect = useCallback(() => {
     setIsConnected(false);
     setWalletState(null);
+    setSelectedWalletName(null);
     setDeployedContract(null);
     setPrivateStateProvider(null);
     setIsLaceMode(false);
     setError(null);
-    toast.success('Lace Wallet disconnected');
+    toast.success('1AM Wallet disconnected');
   }, []);
 
   // Intercept background extension port shutdowns (RemoteApiShutdownError)
@@ -153,7 +156,7 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       if (isStaleWalletChannel(event.reason)) {
         event.preventDefault();
-        console.warn('Lace extension API channel shutdown detected — auto-resetting wallet state.');
+        console.warn('Midnight extension API channel shutdown detected — auto-resetting wallet state.');
         disconnect();
       }
     };
@@ -163,16 +166,27 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
     };
   }, [disconnect]);
 
-  const connect = useCallback(async () => {
+  const connect = useCallback(async (targetRdns?: string) => {
     const findProvider = (): V4InitialAPI | null => {
       const midnightObj = (window as any).midnight;
       if (!midnightObj) return null;
-      const providers = Object.values(midnightObj) as V4InitialAPI[];
-      const laceish = providers.find(
-        (p) => p && typeof p.connect === 'function' && /lace/i.test(p.rdns || p.name || '')
+
+      // If specific wallet requested, look for matching provider
+      if (targetRdns && midnightObj[targetRdns] && typeof midnightObj[targetRdns].connect === 'function') {
+        return midnightObj[targetRdns];
+      }
+
+      const providers = Object.entries(midnightObj) as [string, V4InitialAPI][];
+      
+      // Prioritize 1AM Wallet providers ('1am', 'io.1am')
+      const oneam = providers.find(
+        ([key, p]) => p && typeof p.connect === 'function' && (/1am/i.test(key) || /1am/i.test(p.rdns || p.name || ''))
       );
-      if (laceish) return laceish;
-      return providers.find((p) => p && typeof p.connect === 'function') || null;
+      if (oneam) return oneam[1];
+
+      // Fallback to any valid Midnight connector provider
+      const fallback = providers.find(([_, p]) => p && typeof p.connect === 'function');
+      return fallback ? fallback[1] : null;
     };
 
     let provider = findProvider();
@@ -184,12 +198,14 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (!provider) {
-      const errMsg = 'No Midnight wallet found. Please install and enable the Lace extension for Midnight Preprod.';
+      const errMsg = '1AM Wallet not detected. Please ensure 1AM Wallet extension is installed and enabled.';
       setError(errMsg);
       toast.error(errMsg, { duration: 8000 });
       return;
     }
 
+    const providerName = provider.name || provider.rdns || '1AM Wallet';
+    setSelectedWalletName(providerName);
     setHasLaceExtension(true);
     setIsConnecting(true);
     setError(null);
@@ -214,7 +230,7 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
 
       if (config.networkId && config.networkId !== NETWORK) {
         setIsWrongNetwork(true);
-        const msg = `Lace is connected to "${config.networkId}", but CipherPoll requires "${NETWORK}". Please switch Lace network to Preprod.`;
+        const msg = `${providerName} is connected to "${config.networkId}", but CipherPoll requires "${NETWORK}". Please switch network to Preprod.`;
         setError(msg);
         toast.error(msg, { duration: 7000 });
         setIsConnecting(false);
@@ -245,7 +261,7 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
         midnightDbName: 'anonymous-survey-indexed-db',
         privateStateStoreName: 'anonymous-survey-state',
         accountId: shieldedAddress,
-        privateStoragePasswordProvider: () => LACE_PASSWORD,
+        privateStoragePasswordProvider: () => WALLET_PASSWORD,
       });
 
       psProvider.setContractAddress(contractAddress);
@@ -272,7 +288,7 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
           try {
             ({ tx: balancedHex } = await api.balanceUnsealedTransaction(unsealedHex));
           } catch (e) {
-            if (isStaleWalletChannel(e)) throw new Error('Lace connection was lost. Please reconnect your wallet.');
+            if (isStaleWalletChannel(e)) throw new Error('1AM Wallet connection was lost. Please reconnect.');
             throw e;
           }
           return Transaction.deserialize(
@@ -284,7 +300,7 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
           try {
             await api.submitTransaction(sealedHex);
           } catch (e) {
-            if (isStaleWalletChannel(e)) throw new Error('Lace connection was lost. Please reconnect your wallet.');
+            if (isStaleWalletChannel(e)) throw new Error('1AM Wallet connection was lost. Please reconnect.');
             throw e;
           }
           return tx.identifiers()[0];
@@ -319,12 +335,12 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
       setDeployedContract(deployed);
       setIsConnected(true);
       setIsLaceMode(true);
-      toast.success('Lace Wallet connected to Preprod network!');
+      toast.success(`${providerName} connected to Preprod network!`);
     } catch (err: any) {
-      console.error('Lace wallet connection error:', err);
+      console.error('Wallet connection error:', err);
       const isStale = isStaleWalletChannel(err);
       const errMsg = isStale
-        ? 'Lace connection channel was reset by extension (locked/reloaded). Click Connect again.'
+        ? '1AM Wallet connection was reset by extension. Please click Connect again.'
         : (err?.message || String(err));
       setError(errMsg);
       toast.error(`Connection failed: ${errMsg}`);
@@ -344,8 +360,8 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
     } catch (err: any) {
       if (isStaleWalletChannel(err)) {
         disconnect();
-        toast.error('Lace connection was lost (wallet locked/reloaded). Please reconnect.', { id: 'vote-tx' });
-        throw new Error('Lace connection was lost. Please reconnect your wallet.');
+        toast.error('1AM Wallet connection was lost. Please reconnect.', { id: 'vote-tx' });
+        throw new Error('1AM Wallet connection was lost. Please reconnect.');
       }
       toast.error(`Vote failed: ${err?.message || err}`, { id: 'vote-tx' });
       throw err;
@@ -363,8 +379,8 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
     } catch (err: any) {
       if (isStaleWalletChannel(err)) {
         disconnect();
-        toast.error('Lace connection was lost (wallet locked/reloaded). Please reconnect.', { id: 'close-tx' });
-        throw new Error('Lace connection was lost. Please reconnect your wallet.');
+        toast.error('1AM Wallet connection was lost. Please reconnect.', { id: 'close-tx' });
+        throw new Error('1AM Wallet connection was lost. Please reconnect.');
       }
       toast.error(`Close survey failed: ${err?.message || err}`, { id: 'close-tx' });
       throw err;
@@ -409,6 +425,7 @@ export function LaceProvider({ children }: { children: React.ReactNode }) {
         isConnecting,
         isWrongNetwork,
         walletState,
+        selectedWalletName,
         error,
         connect,
         disconnect,

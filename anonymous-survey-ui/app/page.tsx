@@ -168,16 +168,16 @@ export default function CipherPollPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{ background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Wallet size={14} color="#8b5cf6" />
-                <span>{walletState?.address ? `${walletState.address.slice(0, 14)}...${walletState.address.slice(-6)}` : 'Lace Connected'}</span>
+                <span>{walletState?.address ? `${walletState.address.slice(0, 14)}...${walletState.address.slice(-6)}` : '1AM Wallet Connected'}</span>
               </div>
               <button onClick={disconnect} className="glass-button-secondary" style={{ padding: '8px 14px', fontSize: '0.82rem' }}>
                 Disconnect
               </button>
             </div>
           ) : (
-            <button onClick={connect} disabled={isConnecting} className="glass-button">
+            <button onClick={() => connect()} disabled={isConnecting} className="glass-button">
               <Wallet size={16} />
-              <span>{isConnecting ? 'Connecting Lace...' : 'Connect Lace Wallet'}</span>
+              <span>{isConnecting ? 'Connecting 1AM Wallet...' : 'Connect 1AM Wallet'}</span>
             </button>
           )}
         </div>
@@ -291,7 +291,7 @@ export default function CipherPollPage() {
                 style={{ padding: '12px 24px', fontSize: '0.95rem' }}
               >
                 <Vote size={18} />
-                <span>{isSubmitting ? 'Verifying ZK Proof...' : isConnected ? 'Cast Anonymous Vote' : 'Connect Lace & Vote'}</span>
+                <span>{isSubmitting ? 'Verifying ZK Proof...' : isConnected ? 'Cast Anonymous Vote' : 'Connect 1AM Wallet & Vote'}</span>
               </button>
             </div>
           </div>
@@ -312,7 +312,7 @@ export default function CipherPollPage() {
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                 <CheckCircle2 size={15} color="#8b5cf6" style={{ marginTop: '2px', flexShrink: 0 }} />
-                <span><strong>Witness Privacy:</strong> Local secret key never leaves Lace browser wallet.</span>
+                <span><strong>Witness Privacy:</strong> Local secret key never leaves 1AM browser wallet.</span>
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                 <CheckCircle2 size={15} color="#8b5cf6" style={{ marginTop: '2px', flexShrink: 0 }} />

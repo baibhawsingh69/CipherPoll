@@ -2,9 +2,10 @@
 
 A privacy-preserving, full-stack Zero-Knowledge anonymous survey application built on the Midnight Network using Compact smart contracts and ZK nullifier proofs.
 
-## Live Deployment
+## Live Deployment & Demo
 
 - **Vercel DApp URL**: [https://cipherpoll-peach.vercel.app](https://cipherpoll-peach.vercel.app)
+- **Demo Video**: [Watch 1-Minute Walkthrough](https://drive.google.com/file/d/1tUryuMmCTpCEA43JksPhRLx8j5BpI5Kv/view?usp=sharing)
 
 ## Contract Address
 
@@ -21,7 +22,7 @@ CONTRACT_ADDRESS=7c55c230cecf067415798d79c5e2508ff5eb93911c1c6ff848d7d13ee95ce58
 - **Zero-Knowledge Anonymous Polling**: Voters prove voting eligibility and record choices without exposing voter identity.
 - **ZK Nullifier Protection**: Poseidon hash-based nullifier `H("anon_survey:nullifier", surveyTag, secret)` prevents double voting on the Midnight ledger.
 - **Verifiable Public Tally**: Transparent, on-chain ledger state for public option counters and total vote tallies.
-- **Midnight Lace Wallet Connector & ZK Circuit Simulator**: Integrated witness generation and proof execution pipeline via proof-server (`:6300`).
+- **1AM Wallet & Midnight Wallet Connector**: Integrated witness generation and proof execution pipeline via proof-server (`:6300`).
 - **Modern High-End Web Interface**: Glassmorphism UI with live vote tally charts and ZK transaction audit log.
 - **CLI Tooling**: Command-line interface for deploying, joining, and casting votes.
 
@@ -50,7 +51,7 @@ CipherPoll allows organizations, DAOs, and communities to run 100% anonymous pol
 - **ZK Circuit Compiler**: `compact` (v0.5.1 / 0.31.1)
 - **Proof Server**: `https://proof-server.preprod.midnight.network` / Docker `midnightnetwork/proof-server:latest` (Port 6300)
 - **API & Protocol**: `@midnight-ntwrk/midnight-js-protocol`, `@midnight-ntwrk/midnight-js-contracts`
-- **Frontend**: Next.js 15 (App Router), React 19, TypeScript, Midnight Lace Wallet Connector, Lucide Icons, Custom Glassmorphism CSS System
+- **Frontend**: Next.js 15 (App Router), React 19, TypeScript, 1AM Wallet & Midnight Connector, Lucide Icons, Custom Glassmorphism CSS System
 - **CLI**: Node.js CLI with `@midnight-ntwrk/testkit-js` and LevelDB private state provider
 
 ## Folder Structure
@@ -80,7 +81,7 @@ CipherPoll/
 │   │   ├── page.tsx                  # Main CipherPoll Next.js DApp page
 │   │   └── globals.css               # Midnight dark glassmorphism styling
 │   ├── lib/
-│   │   └── lace-context.tsx          # Midnight Lace Wallet Provider & browser ZK contract runner
+│   │   └── lace-context.tsx          # 1AM Wallet Provider & browser ZK contract runner
 │   ├── next.config.ts                # Next.js WASM & Webpack config
 │   └── package.json
 ├── images/                           # Application Screenshots
@@ -94,7 +95,7 @@ CipherPoll/
 - Node.js >= v22
 - Docker Desktop or Docker Engine running
 - Compact Compiler (`compact --version`)
-- Midnight Lace Wallet Extension (for browser interaction)
+- 1AM Wallet / Midnight Wallet Extension (for browser interaction)
 
 ## Installation
 
